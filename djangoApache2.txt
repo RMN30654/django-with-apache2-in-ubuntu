@@ -1,0 +1,135 @@
+https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/modwsgi/
+httpd.conf
+WSGIScriptAlias / /path/to/mysite.com/mysite/wsgi.py
+WSGIPythonHome /path/to/venv
+WSGIPythonPath /path/to/mysite.com
+
+<Directory /path/to/mysite.com/mysite>
+<Files wsgi.py>
+Require all granted
+</Files>
+</Directory>
+
+mod_wsgi
+Alias /robots.txt /path/to/mysite.com/static/robots.txt
+Alias /favicon.ico /path/to/mysite.com/static/favicon.ico
+
+Alias /media/ /path/to/mysite.com/media/
+Alias /static/ /path/to/mysite.com/static/
+
+<Directory /path/to/mysite.com/static>
+Require all granted
+</Directory>
+
+<Directory /path/to/mysite.com/media>
+Require all granted
+</Directory>
+
+WSGIScriptAlias / /path/to/mysite.com/mysite/wsgi.py
+
+<Directory /path/to/mysite.com/mysite>
+<Files wsgi.py>
+Require all granted
+</Files>
+</Directory>
+
+
+------------------------------------
+https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-apache-and-mod_wsgi-on-ubuntu-14-04
+
+sudo apt-get install python3-pip apache2 libapache2-mod-wsgi-py3
+django-admin.py startproject myproject .
+/etc/apache2/sites-available/000-default.conf
+<VirtualHost *:80>
+    . . .
+
+    Alias /static /home/user/myproject/static
+    <Directory /home/user/myproject/static>
+        Require all granted
+    </Directory>
+
+    <Directory /home/user/myproject/myproject>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+    WSGIDaemonProcess myproject python-path=/home/user/myproject python-home=/home/user/myproject/myprojectenv
+    WSGIProcessGroup myproject
+    WSGIScriptAlias / /home/user/myproject/myproject/wsgi.py
+
+</VirtualHost>
+
+chmod 664 ~/myproject/db.sqlite3
+chown :www-data ~/myproject/db.sqlite3
+chown :www-data ~/myproject
+
+
+-------------------------------------
+https://dev.to/aanis434/how-to-deploy-a-django-application-with-apache2-on-ubuntu-in-aws-ec2-instance-25h2
+Make a demo.conf file on /etc/apache2/sites-available and configure following way 
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName example.com
+    ServerAlias www.example.com
+    DocumentRoot /home/ubuntu/demo
+    <Directory /home/ubuntu/demo>
+        AllowOverride all
+        Require all granted
+        Options FollowSymlinks
+        Allow from all
+    </Directory>
+
+    Alias /media /home/ubuntu/demo/media
+    Alias /static /home/ubuntu/demo/static
+
+    <Directory /home/ubuntu/demo/static>
+        Require all granted
+    </Directory>
+
+    <Directory /home/ubuntu/demo/media>
+    Require all granted
+    </Directory>
+
+    <Directory /home/ubuntu/demo/demo>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+
+    WSGIDaemonProcess demo python-path=/home/ubuntu/demo python-home=/home/ubuntu/demo/env
+    WSGIProcessGroup demo
+    WSGIScriptAlias / /home/ubuntu/demo/demo/wsgi.py
+
+</VirtualHost>
+
+--------------------------------------------
+https://www.javatpoint.com/django-apache-configuration
+
+we need to configure apache2.conf file located at /etc/apache directory. Add the following code into this file.
+    WSGIScriptAlias / /var/www/html/django7/django7/wsgi.py  
+    WSGIPythonPath /var/www/html/django7/  
+      
+    <Directory /var/www/html/django7>  
+       <Files wsgi.py>  
+                    Require all granted  
+       </Files>  
+    </Directory>  
+    
+    ---------------------------------------------
+    https://www.tutorialspoint.com/django/django_apache_setup.htm
+    
+    we need to configure Apache in httpd.conf. So open the httpd.conf and add the following line −
+
+WSGIScriptAlias / /var/www/html/myproject/myproject/wsgi.py
+WSGIPythonPath /var/www/html/myproject/
+
+<Directory /var/www/html/myproject/>
+   <Files wsgi.py>
+      Order deny,allow
+      Allow from all
+   </Files>
+</Directory>
+
+    
